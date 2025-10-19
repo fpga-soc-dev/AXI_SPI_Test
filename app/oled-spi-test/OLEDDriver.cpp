@@ -1,4 +1,5 @@
 #include "OLEDDriver.hpp"
+#include "Font8x8.hpp"
 
 namespace Display
 {
@@ -117,6 +118,7 @@ namespace Display
         }
 
         std::fill(m_DisplayBuffer.begin(), m_DisplayBuffer.end(), 0x00);
+        ResetCursor();
         SPDLOG_DEBUG("OLED display buffer cleared.");
     }
 
@@ -337,6 +339,152 @@ namespace Display
             DrawVLine(x, y, height, color);             // Left
             DrawVLine(x + width - 1, y, height, color); // Right
         }
+    }
+
+    void OLEDDriver::DrawChar(uint8_t x, uint8_t y, char ch, bool color, uint8_t size)
+    {
+        if (!m_Initialized)
+        {
+            SetError("Display not initialized");
+            return;
+        }
+
+        const uint8_t *char_data = Font8x8::GetCharData(ch);
+
+        for (uint8_t row = 0; row < Font8x8::FONT_HEIGHT; row++)
+        {
+            uint8_t font_row = char_data[row];
+
+            for (uint8_t col = 0; col < Font8x8::FONT_WIDTH; col++)
+            {
+                if (font_row & (0x80 >> col))
+                {
+                    uint8_t reversed_col = Font8x8::FONT_WIDTH - 1 - col;
+
+                    for (uint8_t sy = 0; sy < size; sy++)
+                    {
+                        for (uint8_t sx = 0; sx < size; sx++)
+                        {
+                            uint8_t px = x + reversed_col * size + sx;
+                            uint8_t py = y + row * size + sy;
+                            if (px < m_Config.width && py < m_Config.height)
+                            {
+                                SetPixel(px, py, color);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    uint8_t OLEDDriver::DrawStringAutoY(uint8_t x, uint8_t y, const std::string &text, bool color, uint8_t size)
+    {
+        if (!m_Initialized)
+        {
+            SetError("Display not initialized");
+            return y;
+        }
+
+        uint8_t current_x = x;
+        uint8_t current_y = y;
+        uint8_t char_width = Font8x8::FONT_WIDTH * size;
+        uint8_t char_height = Font8x8::FONT_HEIGHT * size;
+        uint8_t line_spacing = 2;
+
+        for (char ch : text)
+        {
+            if (ch == '\n')
+            {
+                current_x = x;
+                current_y += char_height + line_spacing;
+
+                if (current_y + char_height > m_Config.height)
+                {
+                    break;
+                }
+                continue;
+            }
+
+            if (current_x + char_width > m_Config.width)
+            {
+                current_x = x;
+                current_y += char_height + line_spacing;
+
+                if (current_y + char_height > m_Config.height)
+                {
+                    break;
+                }
+            }
+
+            DrawChar(current_x, current_y, ch, color, size);
+            current_x += char_width + 1;
+        }
+
+        // Return Y position for next line
+        return current_y + char_height + line_spacing;
+    }
+
+    void OLEDDriver::DrawString(uint8_t x, uint8_t y, const std::string &text, bool color, uint8_t size)
+    {
+        if (!m_Initialized)
+        {
+            SetError("Display not initialized");
+            return;
+        }
+
+        uint8_t current_x = x;
+        uint8_t current_y = y;
+        uint8_t char_width = Font8x8::FONT_WIDTH * size;
+        uint8_t char_height = Font8x8::FONT_HEIGHT * size;
+        uint8_t line_spacing = 2;
+
+        for (char ch : text)
+        {
+            if (ch == '\n')
+            {
+                current_x = x;
+                current_y += char_height + line_spacing;
+
+                if (current_y + char_height > m_Config.height)
+                {
+                    break;
+                }
+                continue;
+            }
+
+            if (current_x + char_width > m_Config.width)
+            {
+                current_x = x;
+                current_y += char_height + line_spacing;
+
+                if (current_y + char_height > m_Config.height)
+                {
+                    break;
+                }
+            }
+
+            DrawChar(current_x, current_y, ch, color, size);
+            current_x += char_width + 1;
+        }
+
+        SPDLOG_DEBUG("Drew string '{}' starting at position ({}, {}) with size {}", text, x, y, size);
+    }
+
+    void OLEDDriver::ResetCursor()
+    {
+        m_Cursor_x = 0;
+        m_Cursor_y = 0;
+    }
+    void OLEDDriver::PrintLine(const std::string &text, bool color, uint8_t size)
+    {
+        static bool first_call = true;
+        if (first_call)
+        {
+            ResetCursor();
+            first_call = false;
+        }
+        m_Cursor_y = DrawStringAutoY(m_Cursor_x, m_Cursor_y, text, color, size);
+        m_Cursor_x = 0;
     }
 
 } // namespace Display

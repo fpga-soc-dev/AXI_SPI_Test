@@ -26,6 +26,8 @@ repos:
     branch: scarthgap
     layers:
       meta-oe:
+      meta-networking:
+      meta-python:
 
   meta-xilinx:
     url: "https://git.yoctoproject.org/meta-xilinx"

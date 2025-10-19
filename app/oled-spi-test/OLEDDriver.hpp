@@ -4,7 +4,6 @@
 #include "Gpio.hpp"
 #include <cstdint>
 #include <vector>
-#include <memory>
 #include <string>
 
 namespace Display
@@ -14,10 +13,10 @@ namespace Display
         uint8_t reset_pin{0}; // GPIO pin for reset
         uint8_t dc_pin{1};    // GPIO pin for DC (Data/Command)
 
-        uint8_t width{128};      // Display width
-        uint8_t height{64};      // Display height
-        uint8_t start_column{2}; // SH1106 starts at column 2
-        uint8_t contrast{0x80};  // Default contrast
+        uint8_t width{128};
+        uint8_t height{64};
+        uint8_t start_column{2};
+        uint8_t contrast{0x80};
     };
 
     class OLEDDriver
@@ -48,6 +47,9 @@ namespace Display
         void DrawVLine(uint8_t x, uint8_t y, uint8_t length, bool color);
         void DrawRect(uint8_t x, uint8_t y, uint8_t width, uint8_t height, bool color, bool filled = false);
 
+        void DrawString(uint8_t x, uint8_t y, const std::string &text, bool color, uint8_t size = 1);
+        void PrintLine(const std::string &text, bool color, uint8_t size);
+
     private:
         static constexpr uint8_t SH1106_DISPLAYOFF = 0xAE;
         static constexpr uint8_t SH1106_DISPLAYON = 0xAF;
@@ -77,6 +79,8 @@ namespace Display
         std::vector<uint8_t> m_DisplayBuffer;
         bool m_Initialized{false};
         std::string m_LastError;
+        uint8_t m_Cursor_x = 0;
+        uint8_t m_Cursor_y = 0;
 
         void SendCommand(uint8_t command);
         void SendData(uint8_t data);
@@ -92,5 +96,8 @@ namespace Display
 
         void SetColumnAddress(uint8_t column);
         void SetPageAddress(uint8_t page);
+        void DrawChar(uint8_t x, uint8_t y, char ch, bool color, uint8_t size);
+        uint8_t DrawStringAutoY(uint8_t x, uint8_t y, const std::string &text, bool color = true, uint8_t size = 1);
+        void ResetCursor();
     };
 };

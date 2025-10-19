@@ -5,6 +5,7 @@ SRC_URI = "\
     file://main.cpp \
     file://OLEDDriver.cpp \
     file://OLEDDriver.hpp \
+     file://Font8x8.hpp \
     file://Gpio/Gpio.cpp \
     file://Gpio/Gpio.hpp \
     file://SPIInterface/SPIDevice.cpp \

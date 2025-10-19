@@ -4,6 +4,39 @@
 #include "SPIDevice.hpp"
 #include "Gpio.hpp"
 
+std::string getCurrentTime24()
+{
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    auto tm = *std::localtime(&time_t);
+
+    std::stringstream ss;
+    ss << std::put_time(&tm, "%H:%M:%S");
+    return ss.str();
+}
+
+std::string getCurrentDateShort()
+{
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    auto tm = *std::localtime(&time_t);
+
+    std::stringstream ss;
+    ss << std::put_time(&tm, "%d/%m/%Y");
+    return ss.str();
+}
+
+std::string getDayOfWeek()
+{
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    auto tm = *std::localtime(&time_t);
+
+    std::stringstream ss;
+    ss << std::put_time(&tm, "%A");
+    return ss.str();
+}
+
 int main()
 {
     spdlog::set_level(spdlog::level::info);
@@ -21,14 +54,19 @@ int main()
     {
         return -1;
     }
-
-    oled_driver.SetInvertMode(true);
-    oled_driver.SetContrast(0xFF);
+    oled_driver.SetDisplayOn(false);
+    // oled_driver.SetInvertMode(true);
+    // oled_driver.SetContrast(0xFF);
 
     while (true)
     {
+        oled_driver.Clear();
         oled_driver.SetDisplayOn(true);
-        oled_driver.DrawRect(10, 10, 50, 30, true, false);
+
+        oled_driver.PrintLine(getDayOfWeek(), true, 1);
+        oled_driver.PrintLine(getCurrentDateShort(), true, 1);
+        oled_driver.PrintLine(getCurrentTime24(), true, 1);
+
         oled_driver.Display();
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
