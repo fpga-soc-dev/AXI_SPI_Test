@@ -8,3 +8,4 @@ meta-openembedded
 *.xsa
 *.bit
 .kas_shell_history
+meta-user/recipes-connectivity/wpa-supplicant/files/wpa_supplicant.conf

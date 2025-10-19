@@ -1,0 +1,8 @@
+[Match]
+Name=wlu1
+
+[Network]
+DHCP=yes
+
+[DHCP]
+UseRoutes=true
