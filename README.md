@@ -5,7 +5,7 @@
 - Yocto
 - PYNQ Z1 Board
 - Ubuntu 24.04
-- [SH1106 OLED Dislpaly](https://www.waveshare.com/wiki/1.3inch_OLED_(A))
+- [SH1106 OLED Display](https://www.waveshare.com/wiki/1.3inch_OLED_(A))
 
 
 ## Build Vivado Project
