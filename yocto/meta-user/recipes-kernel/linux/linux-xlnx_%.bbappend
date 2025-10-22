@@ -1,5 +1,7 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
 SRC_URI:append = " file://bsp.cfg"
+SRC_URI:append = " file://usb-wifi.cfg"
+
 KERNEL_FEATURES:append = " bsp.cfg"
 KERNEL_FEATURES:append = " usb-wifi.cfg"
