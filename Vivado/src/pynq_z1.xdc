@@ -25,8 +25,9 @@ set_property -dict { PACKAGE_PIN G14   IOSTANDARD LVCMOS33 } [get_ports { RGBLED
 set_property -dict { PACKAGE_PIN L14   IOSTANDARD LVCMOS33 } [get_ports { RGBLED5}]; 
 set_property -dict { PACKAGE_PIN M15   IOSTANDARD LVCMOS33 } [get_ports { RGBLED6}]; 
 
-#AXI IIC
-set_property -dict {PACKAGE_PIN P16 IOSTANDARD LVCMOS33} [get_ports AXI_I2C_SCL]
-set_property -dict {PACKAGE_PIN P15 IOSTANDARD LVCMOS33} [get_ports AXI_I2C_SDA]
-
-
+#AXI SPI
+set_property -dict { PACKAGE_PIN W14   IOSTANDARD LVCMOS33 } [get_ports { SPI_MOSI}]; #PMODEB pin 1
+set_property -dict { PACKAGE_PIN Y14   IOSTANDARD LVCMOS33 } [get_ports { SPI_CLK}];  #PMODEB pin 2
+set_property -dict { PACKAGE_PIN T11   IOSTANDARD LVCMOS33 } [get_ports { SPI_CS}];   #PMODEB pin 3
+set_property -dict { PACKAGE_PIN V16   IOSTANDARD LVCMOS33 } [get_ports { OLED_RESET}];  #PMODEB pin 7
+set_property -dict { PACKAGE_PIN W16   IOSTANDARD LVCMOS33 } [get_ports { OLED_DC}];  #PMODEB pin 8
