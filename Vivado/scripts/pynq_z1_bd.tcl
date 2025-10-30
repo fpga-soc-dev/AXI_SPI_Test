@@ -757,6 +757,7 @@ proc create_root_design { parentCell } {
   set_property -dict [list \
     CONFIG.C_BYTE_LEVEL_INTERRUPT_EN {0} \
     CONFIG.C_XIP_MODE {0} \
+    CONFIG.C_USE_STARTUP {0} \
     CONFIG.FIFO_INCLUDED {1} \
     CONFIG.Master_mode {1} \
   ] $axi_quad_spi_0
